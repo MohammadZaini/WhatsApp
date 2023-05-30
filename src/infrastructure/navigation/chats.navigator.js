@@ -8,7 +8,7 @@ export const ChatsNavigator = () => {
     return (
         <ChatStack.Navigator >
             <ChatStack.Screen name="Home" component={AppNavigator} />
-            <ChatStack.Screen name="Chats1" component={ChatsScreen} />
+            <ChatStack.Screen name="Chats1" component={ChatsScreen} options={{ headerTitle: '' }} />
         </ChatStack.Navigator>
     )
 }
