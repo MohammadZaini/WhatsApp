@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Button } from 'react-native'
+import { Text, Button } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const ChatsList = ({ navigation }) => {
