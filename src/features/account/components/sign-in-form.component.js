@@ -32,6 +32,7 @@ export const SignInForm = () => {
                 iconPack={MaterialCommunityIcons}
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["email"]}
             />
 
             <Input
@@ -42,6 +43,7 @@ export const SignInForm = () => {
                 secureTextEntry
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["password"]}
             />
 
             <SubmitButton

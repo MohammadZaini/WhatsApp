@@ -27,21 +27,24 @@ export const SignUpForm = () => {
     return (
         <>
             <Input
-                id="FirstName"
+                id="firstName"
                 label="First name"
                 icon="user-o"
                 iconPack={FontAwesome}
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["firstName"]}
+
             />
 
             <Input
-                id="LastName"
+                id="lastName"
                 label="Last name"
                 icon="user-o"
                 iconPack={FontAwesome}
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["lastName"]}
 
             />
             <Input
@@ -52,6 +55,8 @@ export const SignUpForm = () => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["email"]}
+
             />
 
             <Input
@@ -62,6 +67,7 @@ export const SignUpForm = () => {
                 secureTextEntry
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
+                errorText={formState.inputValidities["password"]}
             />
 
             <SubmitButton
