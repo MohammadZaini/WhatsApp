@@ -34,7 +34,6 @@ export const SignUpForm = () => {
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
                 errorText={formState.inputValidities["firstName"]}
-
             />
 
             <Input
@@ -45,8 +44,8 @@ export const SignUpForm = () => {
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
                 errorText={formState.inputValidities["lastName"]}
-
             />
+
             <Input
                 id="email"
                 label="Email"
@@ -56,7 +55,6 @@ export const SignUpForm = () => {
                 autoCapitalize="none"
                 onInputChanged={inputChangedHandler}
                 errorText={formState.inputValidities["email"]}
-
             />
 
             <Input
@@ -75,5 +73,5 @@ export const SignUpForm = () => {
                 disabled={!formState.formIsValid}
             />
         </>
-    )
-}
+    );
+};

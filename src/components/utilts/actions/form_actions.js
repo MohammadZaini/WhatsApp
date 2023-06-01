@@ -1,7 +1,7 @@
 import { validateEmail, validatePassword, validateString } from "../validation_constraints";
 
 export const validateInput = (inputId, inputValue) => {
-    if (inputId === "FirstName" || inputId === "LastName") {
+    if (inputId === "firstName" || inputId === "lastName") {
         return validateString(inputId, inputValue)
     } else if (inputId === "email") {
         return (validateEmail(inputId, inputValue))

@@ -39,4 +39,4 @@ const styles = StyleSheet.create({
         marginRight: 10,
         color: colors.grey
     },
-})
+});
