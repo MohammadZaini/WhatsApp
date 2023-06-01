@@ -1,5 +1,5 @@
 export const reducer = (state, action) => {
-    const { validationResult, inputId } = action
+    const { validationResult, inputId } = action;
 
     const updatedValidities = {
         ...state.inputValidities,
@@ -12,11 +12,11 @@ export const reducer = (state, action) => {
         if (updatedValidities[key] !== undefined) {
             updatedFormIsValid = false;
             break;
-        }
-    }
+        };
+    };
 
     return {
         inputValidities: updatedValidities,
         formIsValid: updatedFormIsValid
-    }
+    };
 };
