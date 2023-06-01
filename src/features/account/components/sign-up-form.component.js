@@ -1,12 +1,21 @@
-import React, { useCallback, useReducer } from "react";
+import React, { useState, useEffect, useCallback, useReducer } from "react";
 import { Input } from "./input.component";
 import { SubmitButton } from "./submit-button.component";
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { validateInput } from "../../../components/utilts/actions/form_actions";
 import { reducer } from "../../../components/utilts/reducers/form_reducer";
+import { signUp } from "../../../components/utilts/actions/auth-actions";
+import { Alert } from "react-native";
 
 const initialState = {
+    inputValues: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: ""
+    },
+
     inputValidities: {
         firstName: false,
         lastName: false,
@@ -17,12 +26,34 @@ const initialState = {
 };
 
 export const SignUpForm = () => {
+    const [error, setError] = useState();
     const [formState, dispatchFormState] = useReducer(reducer, initialState);
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert("An error occured", error)
+        }
+    }, [error])
 
     const inputChangedHandler = useCallback((inputId, inputValue) => {
         const result = validateInput(inputId, inputValue);
-        dispatchFormState({ inputId, validationResult: result })
+        dispatchFormState({ inputId, validationResult: result, inputValue })
     }, [dispatchFormState]);
+
+    const authHandler = async () => {
+        try {
+            await signUp(
+                formState.inputValues.firstName,
+                formState.inputValues.lastName,
+                formState.inputValues.email,
+                formState.inputValues.password,
+                setError(null)
+            );
+        } catch (error) {
+            setError(error.message)
+        }
+        ;
+    };
 
     return (
         <>
@@ -70,6 +101,7 @@ export const SignUpForm = () => {
 
             <SubmitButton
                 title="Sign Up"
+                onPress={authHandler}
                 disabled={!formState.formIsValid}
             />
         </>
