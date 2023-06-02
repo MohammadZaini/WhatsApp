@@ -9,6 +9,7 @@ import { signUp } from "../../../components/utilts/actions/auth-actions";
 import { Alert } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { colors } from "../../../infrastructure/theme/colors";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialState = {
     inputValues: {
@@ -28,6 +29,9 @@ const initialState = {
 };
 
 export const SignUpForm = () => {
+    const dispatch = useDispatch();
+    const state = useSelector(state => state.auth);
+    console.log(state);
     const [error, setError] = useState();
     const [isloading, setIsloading] = useState(false);
     const [formState, dispatchFormState] = useReducer(reducer, initialState);
@@ -43,15 +47,16 @@ export const SignUpForm = () => {
         dispatchFormState({ inputId, validationResult: result, inputValue })
     }, [dispatchFormState]);
 
-    const authHandler = async () => {
+    const authHandler = () => {
         try {
             setIsloading(true)
-            await signUp(
+            const action = signUp(
                 formState.inputValues.firstName,
                 formState.inputValues.lastName,
                 formState.inputValues.email,
                 formState.inputValues.password,
             );
+            dispatch(action)
             setError(null)
         } catch (error) {
             setError(error.message)

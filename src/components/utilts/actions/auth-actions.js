@@ -1,27 +1,34 @@
 import { createUserWithEmailAndPassword, getAuth } from "@firebase/auth";
 import { getFirebaseApp } from "../firebase-helper";
 import { child, getDatabase, ref, set } from "firebase/database"
-import { async } from "validate.js";
+import { authenticate } from "../../../../store/auth-slice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const signUp = async (firstName, lastName, email, password) => {
-    const app = getFirebaseApp();
-    const auth = getAuth(app);
+export const signUp = (firstName, lastName, email, password) => {
+    return async dispatch => {
+        const app = getFirebaseApp();
+        const auth = getAuth(app);
 
-    try {
-        const result = await createUserWithEmailAndPassword(auth, email, password)
-        const { uid } = result.user;
-        const userData = await createUser(firstName, lastName, email, uid);
-        console.log(userData);
+        try {
+            const result = await createUserWithEmailAndPassword(auth, email, password)
+            const { uid, stsTokenManager } = result.user;
+            const { accessToken, expirationTime } = stsTokenManager;
+            const expiryDate = new Date(expirationTime);
 
-    } catch (error) {
-        console.log(error);
-        const errorCode = error.error;
-        let message = "Something went wrong";
+            const userData = await createUser(firstName, lastName, email, uid);
 
-        if (errorCode === "auth/email-already-in-use") {
-            message = "This email is already in use"
+            dispatch(authenticate({ token: accessToken, userData }))
+            saveDataToStorage(accessToken, uid, expiryDate)
+        } catch (error) {
+            console.log(error);
+            const errorCode = error.error;
+            let message = "Something went wrong";
+
+            if (errorCode === "auth/email-already-in-use") {
+                message = "This email is already in use"
+            };
+            throw new Error(message)
         };
-        throw new Error(message)
     };
 };
 
@@ -40,4 +47,12 @@ const createUser = async (firstName, lastName, email, userId) => {
     const childRef = child(dbRef, `users/${userId}`)
     await set(childRef, userData);
     return userData;
+};
+
+const saveDataToStorage = (token, userId, expiryDate) => {
+    AsyncStorage("userToken", JSON.stringify({
+        token,
+        userId,
+        expiryDate: expiryDate.toISOString()
+    }));
 };
