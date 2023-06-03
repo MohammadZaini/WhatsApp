@@ -2,12 +2,15 @@ import { StyleSheet } from "react-native"
 import { Container, FieldLabel, InputContainer, AuthInput, ErrorContainer, ErrorText } from "./input.styles";
 
 import { colors } from "../../../infrastructure/theme/colors";
+import { useState } from "react";
 
 export const Input = props => {
+    const [value, setValue] = useState(props.initialValue);
 
     const onChangeText = text => {
+        setValue(text)
         props.onInputChanged(props.id, text);
-    }
+    };
 
     return <Container>
         <FieldLabel>{props.label}</FieldLabel>
@@ -22,6 +25,7 @@ export const Input = props => {
             <AuthInput
                 {...props}
                 onChangeText={onChangeText}
+                value={value}
             />
         </InputContainer>
 

@@ -8,7 +8,7 @@ const Tab = createBottomTabNavigator();
 
 export const AppNavigator = () => {
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false }} >
+        <Tab.Navigator screenOptions={{ headerShown: false, headerShadowVisible: false }} >
             <Tab.Screen
                 name="Chats"
                 component={ChatsList}
