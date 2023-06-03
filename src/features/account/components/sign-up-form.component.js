@@ -9,7 +9,7 @@ import { signUp } from "../../../components/utils/actions/auth-actions";
 import { Alert } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { colors } from "../../../infrastructure/theme/colors";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const initialState = {
     inputValues: {
@@ -29,25 +29,23 @@ const initialState = {
 };
 
 export const SignUpForm = () => {
-    const dispatch = useDispatch();
-    const state = useSelector(state => state.auth);
-    console.log(state);
     const [error, setError] = useState();
     const [isloading, setIsloading] = useState(false);
     const [formState, dispatchFormState] = useReducer(reducer, initialState);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (error) {
-            Alert.alert("An error occured", error)
+            Alert.alert("An error occured", error);
         }
-    }, [error])
+    }, [error]);
 
     const inputChangedHandler = useCallback((inputId, inputValue) => {
         const result = validateInput(inputId, inputValue);
         dispatchFormState({ inputId, validationResult: result, inputValue })
     }, [dispatchFormState]);
 
-    const authHandler = () => {
+    const authHandler = useCallback(async () => {
         try {
             setIsloading(true)
             const action = signUp(
@@ -56,13 +54,13 @@ export const SignUpForm = () => {
                 formState.inputValues.email,
                 formState.inputValues.password,
             );
-            dispatch(action)
             setError(null)
+            await dispatch(action)
         } catch (error) {
             setError(error.message)
             setIsloading(false)
         };
-    };
+    }, [dispatch, formState]);
 
     return (
         <>

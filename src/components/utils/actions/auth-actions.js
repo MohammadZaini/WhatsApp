@@ -1,8 +1,11 @@
-import { createUserWithEmailAndPassword, getAuth } from "@firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "@firebase/auth";
 import { getFirebaseApp } from "../firebase-helper";
 import { child, getDatabase, ref, set } from "firebase/database"
-import { authenticate } from "../../../../store/auth-slice";
+import { authenticate, logout } from "../../../../store/auth-slice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getUserData } from "./user-actions";
+
+let timer;
 
 export const signUp = (firstName, lastName, email, password) => {
     return async dispatch => {
@@ -13,12 +16,20 @@ export const signUp = (firstName, lastName, email, password) => {
             const result = await createUserWithEmailAndPassword(auth, email, password)
             const { uid, stsTokenManager } = result.user;
             const { accessToken, expirationTime } = stsTokenManager;
+
             const expiryDate = new Date(expirationTime);
+            const timeNow = new Date();
+            const millisecondsUntilExpiry = expiryDate - timeNow;
 
             const userData = await createUser(firstName, lastName, email, uid);
 
             dispatch(authenticate({ token: accessToken, userData }))
-            saveDataToStorage(accessToken, uid, expiryDate)
+            saveDataToStorage(accessToken, uid, expiryDate);
+
+            timer = setTimeout(() => {
+                dispatch(userLogout());
+            }, millisecondsUntilExpiry);
+
         } catch (error) {
             console.log(error);
             const errorCode = error.error;
@@ -29,6 +40,53 @@ export const signUp = (firstName, lastName, email, password) => {
             };
             throw new Error(message)
         };
+    };
+};
+
+export const signIn = (email, password) => {
+    return async dispatch => {
+        const app = getFirebaseApp();
+        const auth = getAuth(app);
+
+        try {
+            const result = await signInWithEmailAndPassword(auth, email, password)
+            const { uid, stsTokenManager } = result.user;
+            const { accessToken, expirationTime } = stsTokenManager;
+
+            const expiryDate = new Date(expirationTime);
+            const timeNow = new Date();
+            const millisecondsUntilExpiry = expiryDate - timeNow;
+
+            const userData = await getUserData(uid);
+
+            dispatch(authenticate({ token: accessToken, userData }))
+            saveDataToStorage(accessToken, uid, expiryDate);
+
+            timer = setTimeout(() => {
+                dispatch(userLogout());
+            }, millisecondsUntilExpiry);
+
+        } catch (error) {
+            console.log(error);
+            const errorCode = error.error;
+            let message = "Something went wrong";
+
+            if (errorCode === "auth/user-not-found") {
+                message = "Invalid email";
+            } else if (errorCode === "auth/wrong-password") {
+                message = "Inavlid password";
+            };
+
+            throw new Error(message)
+        };
+    };
+};
+
+export const userLogout = () => {
+    return async dispatch => {
+        AsyncStorage.clear();
+        clearTimeout(timer);
+        dispatch(logout());
     };
 };
 
