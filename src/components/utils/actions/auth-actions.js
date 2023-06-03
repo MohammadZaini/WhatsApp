@@ -50,7 +50,7 @@ const createUser = async (firstName, lastName, email, userId) => {
 };
 
 const saveDataToStorage = (token, userId, expiryDate) => {
-    AsyncStorage("userToken", JSON.stringify({
+    AsyncStorage.setItem("userToken", JSON.stringify({
         token,
         userId,
         expiryDate: expiryDate.toISOString()

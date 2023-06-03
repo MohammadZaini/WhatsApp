@@ -3,8 +3,8 @@ import { Input } from "./input.component";
 import { SubmitButton } from "./submit-button.component";
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { validateInput } from "../../../components/utilts/actions/form_actions";
-import { reducer } from "../../../components/utilts/reducers/form_reducer";
+import { validateInput } from "../../../components/utils/actions/form_actions";
+import { reducer } from "../../../components/utils/reducers/form_reducer";
 
 const initialState = {
     inputValues: {

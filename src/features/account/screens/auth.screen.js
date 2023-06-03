@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PageContainer } from "../../../components/utilts/page-container";
+import { PageContainer } from "../../../components/utils/page-container";
 import { TouchableOpacity, Text, View, Image, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 
 import { SignInForm } from "../components/sign-in-form.component";

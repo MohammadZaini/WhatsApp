@@ -8,7 +8,6 @@ import { StartUpScreen } from "../../features/account/screens/start-up.screen";
 export const Navigation = () => {
     const isAuth = useSelector(state => state.auth.token !== null && state.auth.token !== "");
     const didTryAutoLogin = useSelector(state => state.auth.didTryAutoLogin);
-
     return (
         <NavigationContainer>
             {isAuth && <ChatsNavigator />}
