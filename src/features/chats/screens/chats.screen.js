@@ -6,7 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { ChatsBackground, BottomView, ChatInput, SendIcon } from "../components/chats.styles";
 import { colors } from "../../../infrastructure/theme/colors";
 
-export const ChatsScreen = () => {
+const ChatsScreen = () => {
     const [messageText, setMessageText] = useState("");
 
     const sendMessage = useCallback(() => {
@@ -31,3 +31,5 @@ export const ChatsScreen = () => {
         </SafeAreaView>
     );
 };
+
+export default ChatsScreen;
