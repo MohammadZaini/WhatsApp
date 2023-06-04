@@ -65,8 +65,6 @@ export const SettingsScreen = () => {
                 setShowSuccessMessage(false);
             }, 3000);
 
-            setIsloading(false);
-
         } catch (error) {
             console.log(error);
         } finally {
@@ -87,7 +85,11 @@ export const SettingsScreen = () => {
         <PageContainer>
             <PageTitle text="Settings" />
             <ScrollViewContainer>
-                <ProfileImage size={80} />
+                <ProfileImage
+                    size={80}
+                    userId={userData.userId}
+                    uri={userData.profilePicture}
+                />
 
                 <Input
                     id="firstName"
