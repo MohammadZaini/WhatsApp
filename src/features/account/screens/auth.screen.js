@@ -27,7 +27,7 @@ const LogoContainer = styled.View`
 `;
 
 const Logo = styled(Image).attrs({
-    source: require("../../../../assets/logo.png"),
+    source: require("../../../../assets/images/logo.png"),
     resizeMode: "contain",
 })`
     width: 50%;

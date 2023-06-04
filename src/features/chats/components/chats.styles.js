@@ -3,7 +3,7 @@ import { colors } from "../../../infrastructure/theme/colors";
 import { Feather } from '@expo/vector-icons';
 
 export const ChatsBackground = styled.ImageBackground.attrs({
-    source: require('../../../../assets/droplet.jpeg')
+    source: require('../../../../assets/images/droplet.jpeg')
 })`
     height: 100%;
     width: 100%;

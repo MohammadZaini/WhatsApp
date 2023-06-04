@@ -4,10 +4,10 @@
     "slug": "WhatsApp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/whatsappIcon.png",
+    "icon": "./assets/images/whatsappIcon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/SplashScreen.png",
+      "image": "./assets/images/SplashScreen.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
