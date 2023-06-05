@@ -8,14 +8,20 @@ import { SearchBarContainer, SearchInput, UsersContainer, DefaultText, LoadingCo
 import { useState } from "react";
 import { searchUsers } from "../../../components/utils/actions/user-actions";
 import { ActivityIndicator } from "react-native-paper";
-import { FlatList, Text, View } from "react-native";
+import { FlatList } from "react-native";
 import { DataItem } from "../components/data-item.component";
+import { useSelector, useDispatch } from "react-redux";
+import { setStoredUsers } from "../../../../store/user-slice";
 
 const NewChatScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState();
     const [noResultsFound, setNoResultsFound] = useState(false);
     const [searchTerm, setSeachTerm] = useState('');
+
+    const dispatch = useDispatch();
+
+    const userData = useSelector(state => state.auth.userData);
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -41,12 +47,16 @@ const NewChatScreen = props => {
             setIsLoading(true);
 
             const usersResult = await searchUsers(searchTerm);
+            delete usersResult[userData.userId];
+
             setUsers(usersResult);
 
             if (Object.keys(usersResult).length === 0) {
                 setNoResultsFound(true);
             } else {
                 setNoResultsFound(false);
+
+                dispatch(setStoredUsers({ newUsers: usersResult }));
             }
 
             setIsLoading(false);
@@ -55,6 +65,12 @@ const NewChatScreen = props => {
 
         return () => clearTimeout(delaySearch)
     }, [searchTerm]);
+
+    const userPressed = userId => {
+        props.navigation.navigate("ChatList", {
+            selectedUserId: userId
+        });
+    };
 
     return (
         <PageContainer>
@@ -76,13 +92,15 @@ const NewChatScreen = props => {
                 !isLoading && !noResultsFound && users &&
                 <FlatList
                     data={Object.keys(users)}
-                    renderItem={({ item }) => {
-                        const userData = users[item]
+                    renderItem={(itemData) => {
+                        const userId = itemData.item;
+                        const userData = users[userId];
                         return (
                             <DataItem
                                 title={`${userData.firstName} ${userData.lastName}`}
                                 subTitle={userData.about}
                                 image={userData.profilePicture}
+                                onPress={() => userPressed(userId)}
                             />
                         )
                     }}
