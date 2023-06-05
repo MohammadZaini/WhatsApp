@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import userImage from "../../assets/images/userImage.jpeg"
 import { colors } from "../infrastructure/theme/colors";
 import { FontAwesome } from '@expo/vector-icons';
@@ -11,12 +11,16 @@ import { updateLoggedInUserData } from "../../store/auth-slice";
 import { ActivityIndicator } from "react-native-paper";
 
 export const ProfileImage = props => {
-    const source = props.uri ? { uri: props.uri } : userImage;
-    const userId = props.userId;
     const dispatch = useDispatch();
 
+    const source = props.uri ? { uri: props.uri } : userImage;
+
     const [image, setImage] = useState(source);
-    const [isloading, setIsloading] = useState(false)
+    const [isloading, setIsloading] = useState(false);
+
+    const showEditButton = props.showEditButton && props.showEditButton === true;
+
+    const userId = props.userId;
 
     const pickImage = async () => {
         try {
@@ -45,8 +49,10 @@ export const ProfileImage = props => {
         };
     };
 
+    const Container = showEditButton ? TouchableOpacity : View;
+
     return (
-        <TouchableOpacity onPress={pickImage} >
+        <Container onPress={pickImage} >
 
             {
                 isloading ?
@@ -58,10 +64,13 @@ export const ProfileImage = props => {
                         source={image} />
             }
 
-            <IconContainer>
-                <FontAwesome name="pencil" size={20} color="black" />
-            </IconContainer>
-        </TouchableOpacity>
+            {
+                showEditButton && !isloading &&
+                <IconContainer>
+                    <FontAwesome name="pencil" size={20} color="black" />
+                </IconContainer>
+            }
+        </Container>
     );
 };
 

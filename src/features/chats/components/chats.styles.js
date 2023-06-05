@@ -40,3 +40,9 @@ export const SendIcon = styled(Feather).attrs({
     background-color: ${colors.blue}; 
     border-color: ${colors.blue};
 `;
+
+export const LoadingContainer = styled.View`
+    flex: 1;
+    align-items: center;
+    justift-content: center;
+`;
