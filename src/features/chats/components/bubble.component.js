@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import styled from "styled-components";
 import { colors } from "../../../infrastructure/theme/colors";
 
 export const Bubble = props => {
@@ -8,6 +7,7 @@ export const Bubble = props => {
 
     const bubbleStyle = { ...styles.Container };
     const textStyle = { ...styles.text };
+    const wrapperStyle = { ...styles.wrapperStyle }
 
     switch (type) {
         case "system":
@@ -17,12 +17,27 @@ export const Bubble = props => {
             bubbleStyle.marginTop = 10;
             break;
 
+        case "error":
+            textStyle.color = 'white';
+            bubbleStyle.backgroundColor = colors.red;
+            bubbleStyle.marginTop = 10;
+            break;
+
+        case "myMessage":
+            wrapperStyle.justifyContent = 'flex-end';
+            // wrapperStyle.backgroundColor = '#E7FED6'
+            break;
+
+        case "theirMessage":
+            wrapperStyle.justifyContent = 'flex-start';
+            break;
+
         default:
             break;
-    }
+    };
 
     return (
-        <View style={styles.wrapperStyle}>
+        <View style={wrapperStyle}>
             <View style={bubbleStyle}>
                 <Text style={textStyle}>{text}</Text>
             </View>
@@ -47,17 +62,3 @@ const styles = StyleSheet.create({
         letterSpacing: 0.3,
     }
 });
-
-// const Container = styled.View`
-//     flex-direction: row;
-//     justify-content: center;
-// `;
-
-const TextContainer = styled.View`
-    background-color: white;
-    border-radius: 6px;
-    padding: 5px;
-    margin-bottom: 10px;
-    border-color: #E2DACC;
-    border-width: 1px;
-`;

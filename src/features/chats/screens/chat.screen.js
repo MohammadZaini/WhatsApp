@@ -10,18 +10,39 @@ import { useEffect } from "react";
 import { PageContainer } from "../../../components/utils/page-container";
 import { Bubble } from "../components/bubble.component";
 import { createChat, sendTextMessage } from "../../../components/utils/actions/chat-actions";
+import { FlatList, Text } from "react-native";
 
 const ChatScreen = props => {
+    const [chatUsers, setChatUsers] = useState([]);
+    const [messageText, setMessageText] = useState("");
+    const [chatId, setChatId] = useState(props.route?.params?.chatId);
+    const [errorBannerText, setErrorBannerText] = useState("");
+
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
     const storedChats = useSelector(state => state.chats.chatsData);
-    const storedChatMessages = useSelector(state => state.messages.messagesData);
+    const chatMessages = useSelector(state => {
+        if (!chatId) return [];
 
-    console.log(storedChatMessages);
+        const chatMessagesData = state.messages.messagesData[chatId];
 
-    const [chatUsers, setChatUsers] = useState([]);
-    const [messageText, setMessageText] = useState("");
-    const [chatId, setChatId] = useState(props.route?.params?.chatId)
+        if (!chatMessagesData) return [];
+
+        const messageList = [];
+
+        for (const key in chatMessagesData) {
+            const message = chatMessagesData[key]
+
+            messageList.push({
+                key,
+                ...message,
+            })
+        }
+
+        return messageList;
+    });
+
+    console.log(chatMessages);
 
     const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
@@ -41,22 +62,23 @@ const ChatScreen = props => {
     }, [chatUsers]);
 
     const sendMessage = useCallback(async () => {
-
         try {
             let id = chatId;
             if (!id) {
                 //No chat Id. Create the chat
                 id = await createChat(userData.userId, props.route.params.newChatData);
                 setChatId(id);
-            }
+            };
 
             await sendTextMessage(id, userData.userId, messageText);
+            setMessageText("");
 
         } catch (error) {
             console.log(error);
+            setErrorBannerText("Message failed to send");
+            setTimeout(() => setErrorBannerText(""), 5000);
         };
 
-        setMessageText("")
     }, [messageText, chatId]);
 
     return (
@@ -66,6 +88,27 @@ const ChatScreen = props => {
 
                     {
                         !chatId && <Bubble text="This a new chat. Say hi!" type="system" />
+                    }
+
+                    {
+                        errorBannerText !== "" && <Bubble text={errorBannerText} type="error" />
+                    }
+
+                    {
+                        chatId &&
+                        <FlatList
+                            data={chatMessages}
+                            renderItem={(itemData) => {
+                                const message = itemData.item;
+                                const isOwnMessage = message.sentBy === userData.userId;
+                                const messageType = isOwnMessage ? "myMessage" : "theirMessage";
+
+                                return <Bubble
+                                    type={messageType}
+                                    text={message.text}
+                                />
+                            }}
+                        />
                     }
 
                 </PageContainer>

@@ -30,8 +30,8 @@ export const sendTextMessage = async (chatId, senderId, messageText) => {
     const messageRef = child(dbRef, `messages/${chatId}`);
 
     const messageData = {
-        sendBy: senderId,
-        sendAt: new Date().toISOString(),
+        sentBy: senderId,
+        sentAt: new Date().toISOString(),
         text: messageText,
     };
 
