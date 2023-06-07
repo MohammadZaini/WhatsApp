@@ -13,6 +13,7 @@ import styled from "styled-components";
 import { ActivityIndicator } from "react-native-paper";
 import { colors } from "../theme/colors";
 import { setStoredUsers } from "../../../store/user-slice";
+import { setChatMessages } from "../../../store/messages-slice";
 
 const ChatStack = createNativeStackNavigator();
 
@@ -53,7 +54,6 @@ export const ChatsNavigator = () => {
                     if (data) {
                         data.key = chatSnapshot.key;
 
-
                         data.users.forEach(uid => {
                             if (storedUsers[uid]) return;
 
@@ -75,6 +75,14 @@ export const ChatsNavigator = () => {
                         dispatch(setChatsData({ chatsData }));
                         setIsLoading(false);
                     };
+                });
+
+                const messagesRef = child(dbRef, `messages/${chatId}`);
+                refs.push(messagesRef);
+
+                onValue(messagesRef, messagesSnapshot => {
+                    const messagesData = messagesSnapshot.val();
+                    dispatch(setChatMessages({ chatId, messagesData }));
                 });
 
                 if (chatsFoundCount == 0) {

@@ -9,12 +9,15 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { PageContainer } from "../../../components/utils/page-container";
 import { Bubble } from "../components/bubble.component";
-import { createChat } from "../../../components/utils/actions/chat-actions";
+import { createChat, sendTextMessage } from "../../../components/utils/actions/chat-actions";
 
 const ChatScreen = props => {
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
-    const storedChats = useSelector(state => state.chats.chatsData)
+    const storedChats = useSelector(state => state.chats.chatsData);
+    const storedChatMessages = useSelector(state => state.messages.messagesData);
+
+    console.log(storedChatMessages);
 
     const [chatUsers, setChatUsers] = useState([]);
     const [messageText, setMessageText] = useState("");
@@ -43,14 +46,16 @@ const ChatScreen = props => {
             let id = chatId;
             if (!id) {
                 //No chat Id. Create the chat
-                console.log("Creating the chat");
-
                 id = await createChat(userData.userId, props.route.params.newChatData);
                 setChatId(id);
             }
+
+            await sendTextMessage(id, userData.userId, messageText);
+
         } catch (error) {
             console.log(error);
-        }
+        };
+
         setMessageText("")
     }, [messageText, chatId]);
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Text, Button, View, FlatList } from 'react-native'
+import { FlatList } from 'react-native'
 import CustomHeaderButton from "../../../components/custom-header-button.component";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector } from "react-redux";
@@ -14,9 +14,9 @@ export const ChatsListScreen = props => {
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
     const userChats = useSelector(state => {
-        const chatsData = state.chats.chatsData
+        const chatsData = state.chats.chatsData;
         return Object.values(chatsData).sort((a, b) => {
-            return new Date(b.updatedAt) - new Date(a.updatedAt)
+            return new Date(b.updatedAt) - new Date(a.updatedAt);
         });
     });
 
@@ -64,7 +64,7 @@ export const ChatsListScreen = props => {
                     if (!otherUser) return;
 
                     const title = `${otherUser.firstName} ${otherUser.lastName}`;
-                    const subTitle = "This will be a message";
+                    const subTitle = chatData.latestMessageText || "New chat";
                     const image = otherUser.profilePicture;
 
                     return <DataItem
