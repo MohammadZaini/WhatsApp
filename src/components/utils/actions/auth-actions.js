@@ -32,7 +32,8 @@ export const signUp = (firstName, lastName, email, password) => {
 
         } catch (error) {
             console.log(error);
-            const errorCode = error.error;
+            const errorCode = error.code;
+            console.log(errorCode);
             let message = "Something went wrong";
 
             if (errorCode === "auth/email-already-in-use") {
@@ -68,7 +69,7 @@ export const signIn = (email, password) => {
 
         } catch (error) {
             console.log(error);
-            const errorCode = error.error;
+            const errorCode = error.code;
             let message = "Something went wrong";
 
             if (errorCode === "auth/user-not-found") {

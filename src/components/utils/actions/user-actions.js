@@ -28,7 +28,7 @@ export const searchUsers = async (queryText) => {
 
         if (snapshot.exists()) {
             return snapshot.val();
-        }
+        };
 
         return {};
 

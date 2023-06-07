@@ -10,12 +10,12 @@ const userSlice = createSlice({
             const newUsers = action.payload.newUsers;
             const existingUsers = state.storedUsers;
 
-            const usersArray = Object.values(newUsers);
+            const usersArray = Object.values(newUsers); // usersArray = [{firstName:, lastName:, email:, userId:,...}] every user is an object
 
             for (let i = 0; i < usersArray.length; i++) {
                 const userData = usersArray[i];
                 existingUsers[userData.userId] = userData;
-            }
+            };
 
             state.storedUsers = existingUsers;
         }

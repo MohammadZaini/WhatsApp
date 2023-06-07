@@ -8,6 +8,8 @@ export const ChatsListScreen = props => {
 
     const selectedUserId = props.route?.params?.selectedUserId;
     const userData = useSelector(state => state.auth.userData);
+    const chatsData = useSelector(state => state.chats.chatsData)
+
 
     useEffect(() => {
         if (!selectedUserId) {
@@ -20,7 +22,7 @@ export const ChatsListScreen = props => {
             newChatData: { users: chatUsers }
         };
 
-        props.navigation.navigate("Chats1", naviagtionProps);
+        props.navigation.navigate("Chat", naviagtionProps);
 
     }, [props.route?.params]);
 
@@ -40,7 +42,7 @@ export const ChatsListScreen = props => {
     return (
         <View>
             <Text >Chats List</Text>
-            <Button title="Go To Chats" onPress={() => props.navigation.navigate('Chats1')} />
+            <Button title="Go To Chats" onPress={() => props.navigation.navigate('Chat')} />
         </View>
     );
 };

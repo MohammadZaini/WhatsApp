@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { PageContainer } from "../../../components/utils/page-container";
 import { Bubble } from "../components/bubble.component";
+import { createChat } from "../../../components/utils/actions/chat-actions";
 
 const ChatScreen = props => {
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -16,9 +17,9 @@ const ChatScreen = props => {
 
     const [chatUsers, setChatUsers] = useState([]);
     const [messageText, setMessageText] = useState("");
-    const [chatId, setChatId] = useState(props.route?.params.chatId)
+    const [chatId, setChatId] = useState(props.route?.params?.chatId)
 
-    const chatData = props.route?.params?.newChatData
+    const chatData = props.route?.params?.newChatData;
 
     const getChatTitleFromName = () => {
         const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -35,9 +36,22 @@ const ChatScreen = props => {
         setChatUsers(chatData.users);
     }, [chatUsers]);
 
-    const sendMessage = useCallback(() => {
+    const sendMessage = useCallback(async () => {
+
+        try {
+            let id = chatId;
+            if (!id) {
+                //No chat Id. Create the chat
+                console.log("Creating the chat");
+
+                id = await createChat(userData.userId, props.route?.params?.newChatData);
+                setChatId(id);
+            }
+        } catch (error) {
+            console.log(error);
+        }
         setMessageText("")
-    }, [messageText]);
+    }, [messageText, chatId]);
 
     return (
         <SafeAreaView edges={['bottom']} style={{ flex: 1 }} >
