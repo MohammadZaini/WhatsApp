@@ -3,20 +3,27 @@ import ChatSettingsScreen from "../../features/chats/screens/chat-settings.scree
 import NewChatScreen from "../../features/chats/screens/new-chat.screen";
 import { AppNavigator } from "./app.navigator";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { child, getDatabase, off, onValue, ref } from "firebase/database";
+import { useEffect, useState } from "react";
+import { child, get, getDatabase, off, onValue, ref } from "firebase/database";
 import { getFirebaseApp } from "../../components/utils/firebase-helper";
 import { useDispatch } from "react-redux";
 import { setChatsData } from "../../../store/chat-slice";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import styled from "styled-components";
+import { ActivityIndicator } from "react-native-paper";
+import { colors } from "../theme/colors";
+import { setStoredUsers } from "../../../store/user-slice";
 
 const ChatStack = createNativeStackNavigator();
 
 export const ChatsNavigator = () => {
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const dispatch = useDispatch();
 
     const userData = useSelector(state => state.auth.userData);
+    const storedUsers = useSelector(state => state.users.storedUsers)
 
     useEffect(() => {
         console.log("Subcribing to firebsae listener");
@@ -31,7 +38,6 @@ export const ChatsNavigator = () => {
             const chatIds = Object.values(chatsIdData);
 
             const chatsData = {};
-
             let chatsFoundCount = 0;
 
             for (let i = 0; i < chatIds.length; i++) {
@@ -47,21 +53,48 @@ export const ChatsNavigator = () => {
                     if (data) {
                         data.key = chatSnapshot.key;
 
+
+                        data.users.forEach(uid => {
+                            if (storedUsers[uid]) return;
+
+                            const userRef = child(dbRef, `users/${uid}`);
+
+                            get(userRef)
+                                .then(userSnapshot => {
+                                    const userSnapshotData = userSnapshot.val();
+                                    dispatch(setStoredUsers({ newUsers: { userSnapshotData } }))
+                                })
+
+                            refs.push(userRef);
+                        })
+
                         chatsData[chatSnapshot.key] = data;
                     };
 
-                    if (chatsFoundCount >= chatId.length) {
+                    if (chatsFoundCount >= chatIds.length) {
                         dispatch(setChatsData({ chatsData }));
+                        setIsLoading(false);
                     };
                 });
-            }
+
+                if (chatsFoundCount == 0) {
+                    setIsLoading(false);
+                }
+            };
         })
+
 
         return () => {
             console.log("Unsubcribing firebsae listener");
             refs.forEach(ref => off(ref));
         }
     }, []);
+
+    if (isLoading) {
+        <LoadingContainer>
+            <ActivityIndicator size="large" color={colors.primary} />
+        </LoadingContainer>
+    };
 
     return (
         <ChatStack.Navigator >
@@ -76,3 +109,9 @@ export const ChatsNavigator = () => {
         </ChatStack.Navigator>
     );
 };
+
+const LoadingContainer = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`;

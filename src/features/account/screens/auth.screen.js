@@ -1,45 +1,11 @@
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PageContainer } from "../../../components/utils/page-container";
-import { TouchableOpacity, Text, View, Image, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 
 import { SignInForm } from "../components/sign-in-form.component";
 import { SignUpForm } from "../components/sign-up-form.component";
-import styled from "styled-components";
-import { colors } from "../../../infrastructure/theme/colors";
-
-const Link = styled.Text`
-    color: ${colors.blue};
-    letter-spacing: 0.3px;
-`
-
-const LinkConainer = styled(TouchableOpacity).attrs(props => ({
-    onPress: props.onPress
-}))`
-    justify-content: center;
-    align-items: center;
-    margin-vertical: 15px;
-`;
-
-const LogoContainer = styled.View`
-    justify-content: center;
-    align-items: center;
-`;
-
-const Logo = styled(Image).attrs({
-    source: require("../../../../assets/images/logo.png"),
-    resizeMode: "contain",
-})`
-    width: 50%;
-`;
-
-const KeyboardAvoiding = styled(KeyboardAvoidingView).attrs({
-    behavior: Platform.OS === "ios" ? "height" : undefined,
-    keyboardVerticalOffset: 100,
-})`
-    flex: 1;
-    justify-content: center
-`
+import { KeyboardAvoiding, Link, LinkConainer, Logo, LogoContainer } from "../components/auth.styles";
+import { ScrollView } from "react-native";
 
 export const AuthScreen = () => {
     const [isSigned, setIsSignUp] = useState(false);

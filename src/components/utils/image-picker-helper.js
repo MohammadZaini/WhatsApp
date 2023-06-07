@@ -46,8 +46,6 @@ export const uploadImageAsync = async (uri) => {
     blob.close();
 
     return await getDownloadURL(storageRef);
-
-
 };
 
 const checkMediaPremissions = async () => {

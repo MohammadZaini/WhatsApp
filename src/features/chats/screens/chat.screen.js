@@ -12,14 +12,15 @@ import { Bubble } from "../components/bubble.component";
 import { createChat } from "../../../components/utils/actions/chat-actions";
 
 const ChatScreen = props => {
-    const storedUsers = useSelector(state => state.users.storedUsers);
     const userData = useSelector(state => state.auth.userData);
+    const storedUsers = useSelector(state => state.users.storedUsers);
+    const storedChats = useSelector(state => state.chats.chatsData)
 
     const [chatUsers, setChatUsers] = useState([]);
     const [messageText, setMessageText] = useState("");
     const [chatId, setChatId] = useState(props.route?.params?.chatId)
 
-    const chatData = props.route?.params?.newChatData;
+    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
     const getChatTitleFromName = () => {
         const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -44,7 +45,7 @@ const ChatScreen = props => {
                 //No chat Id. Create the chat
                 console.log("Creating the chat");
 
-                id = await createChat(userData.userId, props.route?.params?.newChatData);
+                id = await createChat(userData.userId, props.route.params.newChatData);
                 setChatId(id);
             }
         } catch (error) {
