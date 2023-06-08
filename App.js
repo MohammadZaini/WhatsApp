@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import * as Font from 'expo-font'
 import { useEffect } from 'react';
+import { MenuProvider } from 'react-native-popup-menu';
 
 export default function App() {
 
@@ -24,7 +25,9 @@ export default function App() {
 
   return (
     <Provider store={store} >
-      <Navigation />
+      <MenuProvider>
+        <Navigation />
+      </MenuProvider>
     </Provider>
   );
 };

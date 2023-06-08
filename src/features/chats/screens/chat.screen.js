@@ -42,8 +42,6 @@ const ChatScreen = props => {
         return messageList;
     });
 
-    console.log(chatMessages);
-
     const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
     const getChatTitleFromName = () => {
@@ -106,6 +104,10 @@ const ChatScreen = props => {
                                 return <Bubble
                                     type={messageType}
                                     text={message.text}
+                                    messageId={message.key}
+                                    userId={userData.userId}
+                                    chatId={chatId}
+                                    date={message.sentAt}
                                 />
                             }}
                         />

@@ -13,7 +13,7 @@ import styled from "styled-components";
 import { ActivityIndicator } from "react-native-paper";
 import { colors } from "../theme/colors";
 import { setStoredUsers } from "../../../store/user-slice";
-import { setChatMessages } from "../../../store/messages-slice";
+import { setChatMessages, setStarredMessages } from "../../../store/messages-slice";
 
 const ChatStack = createNativeStackNavigator();
 
@@ -89,6 +89,13 @@ export const ChatsNavigator = () => {
                     setIsLoading(false);
                 }
             };
+        });
+
+        const userStarredMessagesRef = child(dbRef, `userStarredMessages/${userData.userId}`);
+        refs.push(userStarredMessagesRef);
+        onValue(userStarredMessagesRef, querySnapshot => {
+            const starredMessages = querySnapshot.val() ?? {};
+            dispatch(setStarredMessages({ starredMessages }))
         })
 
 
