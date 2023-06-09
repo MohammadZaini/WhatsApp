@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { View, Text, StyleSheet, TouchableWithoutFeedback, Image } from "react-native";
 import { colors } from "../../../infrastructure/theme/colors";
 import { Menu, MenuTrigger, MenuOptions } from "react-native-popup-menu";
 import uuid from 'react-native-uuid';
@@ -9,6 +9,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { starMessage } from "../../../components/utils/actions/chat-actions";
 import { useSelector } from "react-redux";
 import { Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const Bubble = props => {
 
@@ -23,7 +24,7 @@ export const Bubble = props => {
         return hours + ':' + minutes + ' ' + ampm;
     };
 
-    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name } = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name, imageUrl } = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -107,7 +108,15 @@ export const Bubble = props => {
                         />
                     }
 
-                    <Text style={textStyle}>{text}</Text>
+                    {
+                        !imageUrl &&
+                        <Text style={textStyle}>{text}</Text>
+                    }
+
+                    {
+                        imageUrl &&
+                        <Image source={{ uri: imageUrl }} style={styles.image} />
+                    }
 
                     {
                         dateString && <View style={styles.timeContainer} >
@@ -126,7 +135,7 @@ export const Bubble = props => {
                                 color={"yellow"}
                                 iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
 
-                            <MenuItem text="Reply" icon="chevron-left" iconPack={Entypo} onSelect={setReply} />
+                            <MenuItem text="Reply" icon="reply" iconPack={MaterialCommunityIcons} onSelect={setReply} />
                         </MenuOptions>
                     </Menu>
 
@@ -160,5 +169,10 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: colors.grey,
         letterSpacing: 0.3
+    },
+    image: {
+        height: 300,
+        width: 300,
+        marginBottom: 5
     }
 });

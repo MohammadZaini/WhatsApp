@@ -1,17 +1,19 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather } from '@expo/vector-icons';
-import { AntDesign } from '@expo/vector-icons';
-import { ChatsBackground, BottomView, ChatInput, SendIcon } from "../components/chat.styles";
-import { colors } from "../../../infrastructure/theme/colors";
+import { ChatsBackground, BottomView, ChatInput, SendIcon, SendImageIcon, TakePictureIcon } from "../components/chat.styles";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { PageContainer } from "../../../components/utils/page-container";
 import { Bubble } from "../components/bubble.component";
-import { createChat, sendTextMessage } from "../../../components/utils/actions/chat-actions";
+import { createChat, sendImage, sendTextMessage } from "../../../components/utils/actions/chat-actions";
 import { FlatList } from "react-native";
 import { ReplyTo } from "../components/reply-to.component";
+import { launchImagePicker, openCamera, uploadImageAsync } from "../../../components/utils/image-picker-helper";
+import AwesomeAlert from "react-native-awesome-alerts";
+import { colors } from "../../../infrastructure/theme/colors";
+import { View, Image } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 const ChatScreen = props => {
     const [chatUsers, setChatUsers] = useState([]);
@@ -19,6 +21,10 @@ const ChatScreen = props => {
     const [chatId, setChatId] = useState(props.route?.params?.chatId);
     const [errorBannerText, setErrorBannerText] = useState("");
     const [replyingTo, setReplyingTo] = useState();
+    const [tempImageUri, setTempImageUri] = useState("");
+    const [isLoading, setIsloading] = useState(false);
+
+    const flatlist = useRef();
 
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -81,6 +87,57 @@ const ChatScreen = props => {
 
     }, [messageText, chatId]);
 
+    const pickImage = useCallback(async () => {
+        try {
+            const tempUri = await launchImagePicker();
+
+            if (!tempUri) return;
+
+            setTempImageUri(tempUri)
+        } catch (error) {
+            console.log(error);
+        };
+    }, [tempImageUri]);
+
+
+    const takePhoto = useCallback(async () => {
+        try {
+            const tempUri = await openCamera();
+
+            if (!tempUri) return;
+
+            setTempImageUri(tempUri)
+        } catch (error) {
+            console.log(error);
+        };
+    }, [tempImageUri]);
+
+    const uploadImage = useCallback(async () => {
+        setIsloading(true);
+
+        try {
+
+            let id = chatId;
+            if (!id) {
+                //No chat Id. Create the chat
+                id = await createChat(userData.userId, props.route.params.newChatData);
+                setChatId(id);
+            };
+
+            const uploadUrl = await uploadImageAsync(tempImageUri, true);
+            setIsloading(false);
+            await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key);
+
+            setReplyingTo(null);
+            setTimeout(() => setTempImageUri(""), 500);
+
+        } catch (error) {
+            console.log(error);
+            setIsloading(false);
+        };
+
+    }, [isLoading, tempImageUri]);
+
     return (
         <SafeAreaView edges={['bottom']} style={{ flex: 1 }} >
             <ChatsBackground>
@@ -97,6 +154,10 @@ const ChatScreen = props => {
                     {
                         chatId &&
                         <FlatList
+                            ref={(ref) => flatlist.current = ref}
+                            onContentSizeChange={() => flatlist.current.scrollToEnd({ animated: false })}
+                            onLayout={() => flatlist.current.scrollToEnd({ animated: false })}
+                            showsVerticalScrollIndicator={false}
                             data={chatMessages}
                             renderItem={(itemData) => {
                                 const message = itemData.item;
@@ -112,6 +173,7 @@ const ChatScreen = props => {
                                     date={message.sentAt}
                                     setReply={() => setReplyingTo(message)}
                                     replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
+                                    imageUrl={message.imageUrl}
                                 />
                             }}
                         />
@@ -127,17 +189,61 @@ const ChatScreen = props => {
                     />
                 }
             </ChatsBackground>
+
             <BottomView>
-                <TouchableOpacity>
-                    <AntDesign name="plus" size={24} color={colors.blue} />
+
+                <TouchableOpacity onPress={pickImage} >
+                    <SendImageIcon />
                 </TouchableOpacity>
+
                 <ChatInput value={messageText} onChangeText={setMessageText} />
-                {messageText && <TouchableOpacity onPress={sendMessage} >
-                    <SendIcon />
-                </TouchableOpacity>}
-                {!messageText && <TouchableOpacity>
-                    <Feather name="camera" size={24} color={colors.blue} />
-                </TouchableOpacity>}
+
+                {
+                    messageText &&
+                    <TouchableOpacity onPress={sendMessage} >
+                        <SendIcon />
+                    </TouchableOpacity>
+                }
+
+                {
+                    <AwesomeAlert
+                        show={tempImageUri !== ""}
+                        title="Send Image"
+                        closeOnTouchOutside={true}
+                        closeOnHardwareBackPress={true}
+                        showCancelButton={true}
+                        showConfirmButton={true}
+                        cancelText="Cancel"
+                        confirmText="Send Image"
+                        confirmButtonColor={colors.primary}
+                        cancelButtonColor={colors.red}
+                        // titleStyle={}
+                        onCancelPressed={() => setTempImageUri("")}
+                        onConfirmPressed={uploadImage}
+                        onDismiss={() => setTempImageUri("")}
+                        customView={(
+                            <View>
+                                {
+                                    isLoading &&
+                                    <ActivityIndicator size="small" color={colors.primary} />
+                                }
+
+                                {
+                                    !isLoading && tempImageUri !== "" &&
+                                    <Image source={{ uri: tempImageUri }} style={{ height: 200, width: 200 }} />
+                                }
+                            </View>
+                        )}
+                    />
+                }
+
+                {
+                    !messageText &&
+                    <TouchableOpacity onPress={takePhoto} >
+                        <TakePictureIcon />
+                    </TouchableOpacity>
+                }
+
             </BottomView>
         </SafeAreaView>
     );

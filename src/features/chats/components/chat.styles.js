@@ -40,3 +40,15 @@ export const SendIcon = styled(Feather).attrs({
     background-color: ${colors.blue}; 
     border-color: ${colors.blue};
 `;
+
+export const SendImageIcon = styled(Feather).attrs({
+    name: "plus",
+    size: 27,
+    color: colors.blue
+})``;
+
+export const TakePictureIcon = styled(Feather).attrs({
+    name: "camera",
+    size: 27,
+    color: colors.blue
+})``;

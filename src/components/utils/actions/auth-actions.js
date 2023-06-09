@@ -31,7 +31,6 @@ export const signUp = (firstName, lastName, email, password) => {
             }, millisecondsUntilExpiry);
 
         } catch (error) {
-            console.log(error);
             const errorCode = error.code;
             console.log(errorCode);
             let message = "Something went wrong";
@@ -68,8 +67,8 @@ export const signIn = (email, password) => {
             }, millisecondsUntilExpiry);
 
         } catch (error) {
-            console.log(error);
             const errorCode = error.code;
+            console.log(errorCode);
             let message = "Something went wrong";
 
             if (errorCode === "auth/user-not-found") {
