@@ -39,3 +39,26 @@ export const LoadingContainer = styled.View`
     align-items: center;
     justify-content: center;
 `;
+export const ChatNameContainer = styled.View`
+    padding-vertical: 10px;
+`;
+
+export const AddParticipantsContainer = styled.View`
+    width: 100%;
+    padding-horizontal: 10px;
+    padding-vertical: 15px;
+    background-color: ${colors.nearlyWhite}
+    flex-direction: row;
+    border-radius: 2px;
+`;
+export const AddParticipantsInput = styled.TextInput.attrs(props => ({
+    placeholder: props.placeholder,
+    autoCorrect: props.autoCorrect,
+    autoComplete: props.autoComplete,
+    onChangeText: props.onChangeText,
+    value: props.value
+}))`
+    color: ${colors.textColor};
+    width: 100%;
+    letter-spacing: 0.3px;
+`;

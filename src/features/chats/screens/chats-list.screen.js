@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { DataItem } from "../components/data-item.component";
 import { PageContainer } from "../../../components/utils/page-container";
 import { PageTitle } from "../../settings/components/page-title.component";
+import { TouchableOpacity } from "react-native";
+import { NewGroupContainer, NewGroupText } from "../components/chat-list.styles";
 
 export const ChatsListScreen = props => {
 
@@ -52,6 +54,13 @@ export const ChatsListScreen = props => {
     return (
         <PageContainer>
             <PageTitle text="Chats" />
+
+            <NewGroupContainer>
+                <TouchableOpacity onPress={() => { props.navigation.navigate("NewChat", { isGroupChat: true }) }} >
+                    <NewGroupText>New group</NewGroupText>
+                </TouchableOpacity>
+            </NewGroupContainer>
+
             <FlatList
                 data={userChats}
                 renderItem={(itemData) => {

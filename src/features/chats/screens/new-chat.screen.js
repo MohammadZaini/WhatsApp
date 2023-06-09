@@ -4,7 +4,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { PageContainer } from "../../../components/utils/page-container";
 import { colors } from "../../../infrastructure/theme/colors";
 import { FontAwesome } from '@expo/vector-icons';
-import { SearchBarContainer, SearchInput, UsersContainer, DefaultText, LoadingContainer } from "../components/new-chat.styles";
+import { SearchBarContainer, SearchInput, UsersContainer, DefaultText, LoadingContainer, ChatNameContainer, AddParticipantsContainer, AddParticipantsInput } from "../components/new-chat.styles";
 import { useState } from "react";
 import { searchUsers } from "../../../components/utils/actions/user-actions";
 import { ActivityIndicator } from "react-native-paper";
@@ -18,10 +18,14 @@ const NewChatScreen = props => {
     const [users, setUsers] = useState();
     const [noResultsFound, setNoResultsFound] = useState(false);
     const [searchTerm, setSeachTerm] = useState('');
+    const [chatName, setChatName] = useState('')
 
     const dispatch = useDispatch();
 
     const userData = useSelector(state => state.auth.userData);
+
+    const isGroupChat = props.route.params && props.route.params.isGroupChat;
+    const isGroupChatDisabled = chatName === "";
 
     useEffect(() => {
         props.navigation.setOptions({
@@ -32,9 +36,23 @@ const NewChatScreen = props => {
                         onPress={() => props.navigation.goBack()} />
                 </HeaderButtons>
             },
-            headerTitle: "New chat"
+
+            headerRight: () => {
+                return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                    {
+                        isGroupChat &&
+                        <Item
+                            title="Create"
+                            disabled={isGroupChatDisabled}
+                            color={isGroupChatDisabled ? colors.lightGrey : undefined}
+                            onPress={() => props.navigation.goBack()} />
+                    }
+
+                </HeaderButtons>
+            },
+            headerTitle: isGroupChat ? "Add participants" : "New chat"
         })
-    }, []);
+    }, [chatName]);
 
     useEffect(() => {
         const delaySearch = setTimeout(async () => {
@@ -74,11 +92,26 @@ const NewChatScreen = props => {
 
     return (
         <PageContainer>
+
+            {
+                isGroupChat &&
+                <ChatNameContainer>
+                    <AddParticipantsContainer>
+                        <AddParticipantsInput
+                            placeholder="Enter a name for your chat"
+                            autoCorrect={false}
+                            autoComplete={'off'}
+                            value={chatName}
+                            onChangeText={setChatName}
+                        />
+                    </AddParticipantsContainer>
+                </ChatNameContainer>
+            }
+
             <SearchBarContainer>
                 <FontAwesome name="search" size={15} color={colors.lightGrey} />
                 <SearchInput onChangeText={setSeachTerm} />
             </SearchBarContainer>
-
 
             {
                 isLoading &&
