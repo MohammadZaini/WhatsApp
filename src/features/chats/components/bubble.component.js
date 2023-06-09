@@ -8,6 +8,7 @@ import { MenuItem } from "./menu-item.component";
 import { FontAwesome } from '@expo/vector-icons';
 import { starMessage } from "../../../components/utils/actions/chat-actions";
 import { useSelector } from "react-redux";
+import { Entypo } from '@expo/vector-icons';
 
 export const Bubble = props => {
 
@@ -22,9 +23,10 @@ export const Bubble = props => {
         return hours + ':' + minutes + ' ' + ampm;
     };
 
-    const { text, type, messageId, chatId, userId, date } = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name } = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
+    const storedUsers = useSelector(state => state.users.storedUsers);
 
     const bubbleStyle = { ...styles.Container };
     const textStyle = { ...styles.text };
@@ -35,7 +37,7 @@ export const Bubble = props => {
 
     let Container = View;
     let isUserMessage = false;
-    const dateString = formatDateAmPm(date)
+    const dateString = date && formatDateAmPm(date)
 
     switch (type) {
         case "system":
@@ -67,6 +69,10 @@ export const Bubble = props => {
             isUserMessage = true;
             break;
 
+        case "reply":
+            bubbleStyle.backgroundColor = "#F2F2F2";
+            break;
+
         default:
             break;
     };
@@ -80,11 +86,27 @@ export const Bubble = props => {
     };
 
     const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
+    const replyingToUser = replyingTo && storedUsers[replyingTo.sentBy];
 
     return (
         <View style={wrapperStyle}>
             <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }} >
                 <View style={bubbleStyle}>
+
+                    {
+                        name &&
+                        <Text style={{ fontWeight: 'bold' }} >{name}</Text>
+                    }
+
+                    {
+                        replyingToUser &&
+                        <Bubble
+                            type="reply"
+                            text={replyingTo.text}
+                            name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
+                        />
+                    }
+
                     <Text style={textStyle}>{text}</Text>
 
                     {
@@ -103,13 +125,15 @@ export const Bubble = props => {
                                 icon={`${isStarred ? "star" : "star-o"}`}
                                 color={"yellow"}
                                 iconPack={FontAwesome} onSelect={() => starMessage(messageId, chatId, userId)} />
+
+                            <MenuItem text="Reply" icon="chevron-left" iconPack={Entypo} onSelect={setReply} />
                         </MenuOptions>
                     </Menu>
 
                 </View>
             </Container>
         </View>
-    )
+    );
 };
 
 const styles = StyleSheet.create({

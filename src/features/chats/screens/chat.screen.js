@@ -10,13 +10,15 @@ import { useEffect } from "react";
 import { PageContainer } from "../../../components/utils/page-container";
 import { Bubble } from "../components/bubble.component";
 import { createChat, sendTextMessage } from "../../../components/utils/actions/chat-actions";
-import { FlatList, Text } from "react-native";
+import { FlatList } from "react-native";
+import { ReplyTo } from "../components/reply-to.component";
 
 const ChatScreen = props => {
     const [chatUsers, setChatUsers] = useState([]);
     const [messageText, setMessageText] = useState("");
     const [chatId, setChatId] = useState(props.route?.params?.chatId);
     const [errorBannerText, setErrorBannerText] = useState("");
+    const [replyingTo, setReplyingTo] = useState();
 
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -68,9 +70,9 @@ const ChatScreen = props => {
                 setChatId(id);
             };
 
-            await sendTextMessage(id, userData.userId, messageText);
+            await sendTextMessage(id, userData.userId, messageText, replyingTo && replyingTo.key);
             setMessageText("");
-
+            setReplyingTo(null)
         } catch (error) {
             console.log(error);
             setErrorBannerText("Message failed to send");
@@ -108,12 +110,22 @@ const ChatScreen = props => {
                                     userId={userData.userId}
                                     chatId={chatId}
                                     date={message.sentAt}
+                                    setReply={() => setReplyingTo(message)}
+                                    replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
                                 />
                             }}
                         />
                     }
 
                 </PageContainer>
+                {
+                    replyingTo &&
+                    <ReplyTo
+                        text={replyingTo.text}
+                        user={storedUsers[replyingTo.sentBy]}
+                        onCancel={() => setReplyingTo(null)}
+                    />
+                }
             </ChatsBackground>
             <BottomView>
                 <TouchableOpacity>
