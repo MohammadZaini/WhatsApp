@@ -73,7 +73,7 @@ const ChatScreen = props => {
                             title="Chat settings"
                             iconName="settings-outline"
                             onPress={() => chatData.isGroupChat ?
-                                props.navigation.navigate("") :
+                                props.navigation.navigate("ChatsSettings", { chatId }) :
                                 props.navigation.navigate("Contact", { uid: otherUserId })}
                         />
                     }
@@ -82,7 +82,7 @@ const ChatScreen = props => {
         });
 
         setChatUsers(chatData.users);
-    }, [chatUsers]);
+    }, [chatUsers, chatData.chatName]);
 
     const sendMessage = useCallback(async () => {
         try {

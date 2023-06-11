@@ -49,13 +49,14 @@ export const ChatsListScreen = props => {
                 newChatData: {
                     users: chatUsers,
                     isGroupChat: selectedUserList !== undefined,
-                    chatName
+                    // chatName
                 }
             };
 
-            // if (chatName) {
-            //     naviagtionProps.chatName = chatName;
-            // };
+            if (chatName) {
+                naviagtionProps.newChatData.chatName = chatName;
+            };
+            console.log(naviagtionProps);
         };
 
 
@@ -101,6 +102,7 @@ export const ChatsListScreen = props => {
 
                     if (isGroupChat) {
                         title = chatData.chatName;
+                        image = chatData.chatImage;
                     } else {
                         const otherUserId = chatData.users.find(uid => uid !== userData.userId);
                         const otherUser = storedUsers[otherUserId];
@@ -111,8 +113,6 @@ export const ChatsListScreen = props => {
 
                         image = otherUser.profilePicture;
                     }
-
-
 
                     return <DataItem
                         title={title}

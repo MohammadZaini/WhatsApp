@@ -117,7 +117,7 @@ export const ChatsNavigator = () => {
             <ChatStack.Group>
                 <ChatStack.Screen name="Home" component={AppNavigator} options={{ headerTitle: '', headerShown: false }} />
                 <ChatStack.Screen name="Chat" component={ChatScreen} options={{ headerTitle: '' }} />
-                <ChatStack.Screen name="ChatsSettings" component={ChatSettingsScreen} options={{ headerTitle: '' }} />
+                <ChatStack.Screen name="ChatsSettings" component={ChatSettingsScreen} options={{ headerTitle: '', headerShadowVisible: false }} />
                 <ChatStack.Screen name="Contact" component={ContactScreen} options={{ headerTitle: 'Contact info', headerBackTitle: "Back" }} />
             </ChatStack.Group>
             <ChatStack.Group screenOptions={{ presentation: 'modal' }} >

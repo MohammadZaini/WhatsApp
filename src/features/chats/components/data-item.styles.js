@@ -29,3 +29,13 @@ export const SubTitle = styled.Text.attrs(props => ({
     letter-spacing: 0.3px;
     color: ${colors.grey}
 `;
+
+export const AddIconContainer = styled.View.attrs(props => ({
+    height: props.height,
+    width: props.width
+}))`
+background-color: ${colors.extraLightGrey};
+border-radius: 50px;
+align-items: center;
+justify-content: center;
+`;

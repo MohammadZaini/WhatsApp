@@ -14,7 +14,7 @@ const ContactScreen = props => {
     const storedUsers = useSelector(state => state.users.storedUsers);
     const storedChats = useSelector(state => state.chats.chatsData); // An object of stored chats. ex, {id: { createdAt: ..., latestMessageText: ... }}
     const currentUser = storedUsers[currentUserId]
-    console.log(storedChats);
+
     const [commonChats, setCommonChats] = useState([]); // An array of chats ids
 
     useEffect(() => {
@@ -58,6 +58,7 @@ const ContactScreen = props => {
                                 subTitle={chatData.latestMessageText}
                                 type="link"
                                 onPress={() => props.navigation.push("Chat", { chatid: cid })}
+                                image={chatData.chatImage}
                             />
                         })
                     }
