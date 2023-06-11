@@ -11,7 +11,9 @@ import { NewGroupContainer, NewGroupText } from "../components/chat-list.styles"
 
 export const ChatsListScreen = props => {
 
-    const selectedUserId = props.route?.params?.selectedUserId;
+    const selectedUser = props.route?.params?.selectedUserId;
+    const selectedUserList = props.route?.params?.selectedUsers;
+    const chatName = props.route?.params?.chatName;
 
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -23,15 +25,40 @@ export const ChatsListScreen = props => {
     });
 
     useEffect(() => {
-        if (!selectedUserId) {
+        if (!selectedUser && !selectedUserList) {
             return;
         };
 
-        const chatUsers = [selectedUserId, userData.userId];
+        let chatData;
+        let naviagtionProps;
 
-        const naviagtionProps = {
-            newChatData: { users: chatUsers }
+        if (selectedUser) {
+            chatData = userChats.find(cd => !cd.isGroupChat && cd.users.includes(selectedUser))
         };
+
+        if (chatData) {
+            naviagtionProps = { chatId: chatData.key }
+        } else {
+            const chatUsers = selectedUserList || [selectedUser];
+
+            if (!chatUsers.includes(userData.userId)) {
+                chatUsers.push(userData.userId)
+            }
+
+            naviagtionProps = {
+                newChatData: {
+                    users: chatUsers,
+                    isGroupChat: selectedUserList !== undefined,
+                    chatName
+                }
+            };
+
+            // if (chatName) {
+            //     naviagtionProps.chatName = chatName;
+            // };
+        };
+
+
 
         props.navigation.navigate("Chat", naviagtionProps);
 
@@ -66,15 +93,26 @@ export const ChatsListScreen = props => {
                 renderItem={(itemData) => {
                     const chatData = itemData.item;
                     const chatId = chatData.key;
+                    const isGroupChat = chatData.isGroupChat;
 
-                    const otherUserId = chatData.users.find(uid => uid !== userData.userId);
-                    const otherUser = storedUsers[otherUserId];
-
-                    if (!otherUser) return;
-
-                    const title = `${otherUser.firstName} ${otherUser.lastName}`;
+                    let title = "";
                     const subTitle = chatData.latestMessageText || "New chat";
-                    const image = otherUser.profilePicture;
+                    let image = "";
+
+                    if (isGroupChat) {
+                        title = chatData.chatName;
+                    } else {
+                        const otherUserId = chatData.users.find(uid => uid !== userData.userId);
+                        const otherUser = storedUsers[otherUserId];
+
+                        if (!otherUser) return;
+
+                        title = `${otherUser.firstName} ${otherUser.lastName}`;
+
+                        image = otherUser.profilePicture;
+                    }
+
+
 
                     return <DataItem
                         title={title}

@@ -19,6 +19,7 @@ export const ProfileImage = props => {
     const [isloading, setIsloading] = useState(false);
 
     const showEditButton = props.showEditButton && props.showEditButton === true;
+    const showRemoveButton = props.showRemoveButton && props.showRemoveButton === true;
 
     const userId = props.userId;
 
@@ -49,10 +50,10 @@ export const ProfileImage = props => {
         };
     };
 
-    const Container = showEditButton ? TouchableOpacity : View;
+    const Container = props.onPress || showEditButton ? TouchableOpacity : View;
 
     return (
-        <Container onPress={pickImage} >
+        <Container style={props.style} onPress={props.onPress || pickImage} >
 
             {
                 isloading ?
@@ -66,9 +67,16 @@ export const ProfileImage = props => {
 
             {
                 showEditButton && !isloading &&
-                <IconContainer>
+                <ShowIconContainer>
                     <FontAwesome name="pencil" size={20} color="black" />
-                </IconContainer>
+                </ShowIconContainer>
+            }
+
+            {
+                showRemoveButton && !isloading &&
+                <RemoveIconContainer >
+                    <FontAwesome name="close" size={15} color="black" />
+                </RemoveIconContainer>
             }
         </Container>
     );
@@ -82,13 +90,22 @@ const styles = StyleSheet.create({
     }
 });
 
-const IconContainer = styled.View`
+const ShowIconContainer = styled.View`
     position: absolute;
     bottom: 0;
     right: 0;
     background-color: ${colors.lightGrey};
     border-radius: 20px;
     padding: 8px;
+`;
+
+const RemoveIconContainer = styled.View`
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    background-color: ${colors.lightGrey};
+    border-radius: 20px;
+    padding: 3px;
 `;
 
 const LoadingContainer = styled.View.attrs(props => ({

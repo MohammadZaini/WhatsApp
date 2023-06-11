@@ -51,6 +51,7 @@ const ChatScreen = props => {
     });
 
     const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
+    const chatName = props.route?.params?.chatName;
 
     const getChatTitleFromName = () => {
         const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -61,7 +62,7 @@ const ChatScreen = props => {
 
     useEffect(() => {
         props.navigation.setOptions({
-            headerTitle: getChatTitleFromName()
+            headerTitle: chatData.chatName ?? getChatTitleFromName()
         });
 
         setChatUsers(chatData.users);
@@ -164,6 +165,9 @@ const ChatScreen = props => {
                                 const isOwnMessage = message.sentBy === userData.userId;
                                 const messageType = isOwnMessage ? "myMessage" : "theirMessage";
 
+                                const sender = message.sentBy && storedUsers[message.sentBy];
+                                const name = sender && `${sender.firstName} ${sender.lastName}`
+
                                 return <Bubble
                                     type={messageType}
                                     text={message.text}
@@ -171,6 +175,7 @@ const ChatScreen = props => {
                                     userId={userData.userId}
                                     chatId={chatId}
                                     date={message.sentAt}
+                                    name={!chatData.isGroupChat || isOwnMessage ? undefined : name}
                                     setReply={() => setReplyingTo(message)}
                                     replyingTo={message.replyTo && chatMessages.find(i => i.key === message.replyTo)}
                                     imageUrl={message.imageUrl}

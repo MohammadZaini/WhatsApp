@@ -12,6 +12,7 @@ export const Container = styled.View`
 
 export const TextContainer = styled.View`
     margin-left: 14px;
+    flex: 1;
 `;
 
 export const Title = styled.Text.attrs(props => ({
