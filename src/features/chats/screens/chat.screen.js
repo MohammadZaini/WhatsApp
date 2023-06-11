@@ -14,6 +14,8 @@ import AwesomeAlert from "react-native-awesome-alerts";
 import { colors } from "../../../infrastructure/theme/colors";
 import { View, Image } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import CustomHeaderButton from "../../../components/custom-header-button.component";
 
 const ChatScreen = props => {
     const [chatUsers, setChatUsers] = useState([]);
@@ -53,16 +55,30 @@ const ChatScreen = props => {
     const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
     const chatName = props.route?.params?.chatName;
 
-    const getChatTitleFromName = () => {
-        const otherUserId = chatUsers.find(uid => uid !== userData.userId);
-        const otherUserData = storedUsers[otherUserId];
+    const otherUserId = chatUsers.find(uid => uid !== userData.userId);
 
+    const getChatTitleFromName = () => {
+        const otherUserData = storedUsers[otherUserId];
         return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
     };
 
     useEffect(() => {
         props.navigation.setOptions({
-            headerTitle: chatData.chatName ?? getChatTitleFromName()
+            headerTitle: chatData.chatName ?? getChatTitleFromName(),
+            headerRight: () => {
+                return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                    {
+                        chatId &&
+                        <Item
+                            title="Chat settings"
+                            iconName="settings-outline"
+                            onPress={() => chatData.isGroupChat ?
+                                props.navigation.navigate("") :
+                                props.navigation.navigate("Contact", { uid: otherUserId })}
+                        />
+                    }
+                </HeaderButtons>
+            }
         });
 
         setChatUsers(chatData.users);

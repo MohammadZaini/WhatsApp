@@ -23,13 +23,21 @@ export const DataItem = props => {
                     >{subTitle}
                     </SubTitle>
                 </TextContainer>
+
                 {
                     type === "checkbox" &&
                     <View style={{ ...styles.iconContainer, ...isChecked && styles.checkedStyle }} >
                         <Ionicons name="checkmark" size={18} color="white" />
                     </View>
-
                 }
+
+                {
+                    type === "link" &&
+                    <View >
+                        <Ionicons name="chevron-forward-outline" size={18} color={colors.grey} />
+                    </View>
+                }
+
             </Container>
         </TouchableWithoutFeedback>
     )

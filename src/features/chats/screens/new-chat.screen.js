@@ -149,8 +149,6 @@ const NewChatScreen = props => {
                 </>
             }
 
-
-
             <SearchBarContainer>
                 <FontAwesome name="search" size={15} color={colors.lightGrey} />
                 <SearchInput onChangeText={setSeachTerm} />
