@@ -15,13 +15,30 @@ import { updateLoggedInUserData } from "../../../../store/auth-slice";
 import { Text, ScrollView } from "react-native";
 import { ProfileImage } from "../../../components/profile-image.component";
 import styled from "styled-components";
+import { DataItem } from "../../chats/components/data-item.component";
+import { useMemo } from "react";
 
-export const SettingsScreen = () => {
+export const SettingsScreen = props => {
     const dispatch = useDispatch();
     const [isloading, setIsloading] = useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const userData = useSelector(state => state.auth.userData);
+    const starredMessages = useSelector(state => state.messages.starredMessages ?? {});
+
+    const storedStarredMessages = useMemo(() => {
+        let result = [];
+
+        const chats = Object.values(starredMessages);
+
+        chats.forEach(chat => {
+            const chatMessages = Object.values(chat);
+            result = result.concat(chatMessages);
+        });
+
+        return result;
+    }, [starredMessages])
+
 
     const firstName = userData.firstName || "";
     const lastName = userData.lastName || "";
@@ -152,6 +169,13 @@ export const SettingsScreen = () => {
                         disabled={!formState.formIsValid}
                     />
                 }
+
+                <DataItem
+                    type="link"
+                    title="Starred messages"
+                    hideImage={true}
+                    onPress={() => props.navigation.navigate("DataList", { title: "Starred messages", data: storedStarredMessages, type: "messages" })}
+                />
 
                 <SubmitButton
                     title="Log out"
