@@ -15,6 +15,7 @@ import { colors } from "../theme/colors";
 import { setStoredUsers } from "../../../store/user-slice";
 import { setChatMessages, setStarredMessages } from "../../../store/messages-slice";
 import ContactScreen from "../../features/settings/screens/contact.screen";
+import DataListScreen from "../../features/chats/screens/data-list.screen";
 
 const ChatStack = createNativeStackNavigator();
 
@@ -124,6 +125,7 @@ export const ChatsNavigator = () => {
                 <ChatStack.Screen name="Chat" component={ChatScreen} options={{ headerTitle: '' }} />
                 <ChatStack.Screen name="ChatsSettings" component={ChatSettingsScreen} options={{ headerTitle: '', headerShadowVisible: false }} />
                 <ChatStack.Screen name="Contact" component={ContactScreen} options={{ headerTitle: 'Contact info', headerBackTitle: "Back" }} />
+                <ChatStack.Screen name="DataList" component={DataListScreen} options={{ headerTitle: '', headerBackTitle: "Back" }} />
             </ChatStack.Group>
             <ChatStack.Group screenOptions={{ presentation: 'modal' }} >
                 <ChatStack.Screen name="NewChat" component={NewChatScreen} />
