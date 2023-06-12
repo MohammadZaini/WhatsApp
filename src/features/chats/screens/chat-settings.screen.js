@@ -6,13 +6,14 @@ import { ProfileImage } from "../../../components/profile-image.component";
 import { ScrollViewContainer } from "../components/chat-settings.styles";
 import { Input } from "../../account/components/input.component";
 import { reducer } from "../../../components/utils/reducers/form_reducer";
-import { removeUserFromChat, updateChatData } from "../../../components/utils/actions/chat-actions";
+import { addUsersToChats, removeUserFromChat, updateChatData } from "../../../components/utils/actions/chat-actions";
 import { ActivityIndicator } from "react-native-paper";
 import { colors } from "../../../infrastructure/theme/colors";
 import { SubmitButton } from "../../account/components/submit-button.component";
 import { validateInput } from "../../../components/utils/actions/form_actions";
 import { Text, View } from "react-native";
 import { DataItem } from "../components/data-item.component";
+import { useEffect } from "react";
 
 const ChatSettingsScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
@@ -30,6 +31,28 @@ const ChatSettingsScreen = props => {
     }
 
     const [formState, dispatchFormState] = useReducer(reducer, initialState);
+
+    const selectedUsers = props.route.params && props.route.params.selectedUsers;
+    useEffect(() => {
+        if (!selectedUsers) return;
+
+        const selectedUsersData = [];
+
+        selectedUsers.forEach(uid => {
+            if (uid === userData.userId) return;
+
+            if (!storedUsers[uid]) {
+                console.log("No user data found in the data store");
+                return;
+            };
+
+            selectedUsersData.push(storedUsers[uid])
+        });
+
+        addUsersToChats(userData, selectedUsersData, chatData);
+
+
+    }, [selectedUsers])
 
     const inputChangedHandler = useCallback((inputId, inputValue) => {
         const result = validateInput(inputId, inputValue);
@@ -106,6 +129,7 @@ const ChatSettingsScreen = props => {
                     title="Add users"
                     icon="plus"
                     type="button"
+                    onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true, existingUsers: chatData.users, chatId })}
                 />
             </View>
 
