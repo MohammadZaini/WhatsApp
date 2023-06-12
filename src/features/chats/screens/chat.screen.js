@@ -52,7 +52,7 @@ const ChatScreen = props => {
         return messageList;
     });
 
-    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
+    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData || {};
     const chatName = props.route?.params?.chatName;
 
     const otherUserId = chatUsers.find(uid => uid !== userData.userId);
@@ -63,6 +63,8 @@ const ChatScreen = props => {
     };
 
     useEffect(() => {
+        if (!chatData) return;
+
         props.navigation.setOptions({
             headerTitle: chatData.chatName ?? getChatTitleFromName(),
             headerRight: () => {
@@ -179,7 +181,16 @@ const ChatScreen = props => {
                             renderItem={(itemData) => {
                                 const message = itemData.item;
                                 const isOwnMessage = message.sentBy === userData.userId;
-                                const messageType = isOwnMessage ? "myMessage" : "theirMessage";
+
+                                let messageType;
+
+                                if (message.type && message.type === "info") {
+                                    messageType = "info"
+                                } else if (isOwnMessage) {
+                                    messageType = "myMessage";
+                                } else {
+                                    messageType = "theirMessage"
+                                }
 
                                 const sender = message.sentBy && storedUsers[message.sentBy];
                                 const name = sender && `${sender.firstName} ${sender.lastName}`
