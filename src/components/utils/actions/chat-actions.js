@@ -37,8 +37,11 @@ export const sendInfoMessage = async (chatId, senderId, messageText) => {
     await sendMessage(chatId, senderId, messageText, null, null, "info")
 };
 
-export const sendImage = async (chatId, senderId, imageUrl, replyTo) => {
-    await sendMessage(chatId, senderId, "Photo", imageUrl, replyTo, null)
+export const sendImage = async (chatId, senderData, imageUrl, replyTo, chatUsers) => {
+    await sendMessage(chatId, senderData.userId, "Photo", imageUrl, replyTo, null)
+
+    const otherUsers = chatUsers.filter(uid => uid !== senderData.userId);
+    await sendPushNotificationsForUsers(otherUsers, `${senderData.firstName} ${senderData.lastName}`, `${senderData.firstName} sent a photo`);
 };
 
 export const updateChatData = async (chatId, userId, chatData) => {
@@ -168,7 +171,7 @@ export const addUsersToChats = async (userLoggedInData, usersToAddData, chatData
     await sendInfoMessage(chatData.key, userLoggedInData.userId, messageText);
 };
 
-const sendPushNotificationsForUsers = (chatUsers, title, body) => {
+const sendPushNotificationsForUsers = (chatUsers, title, body, chatId) => {
     chatUsers.forEach(async uid => {
         const tokens = await getUserPushTokens(uid);
 
@@ -183,7 +186,8 @@ const sendPushNotificationsForUsers = (chatUsers, title, body) => {
                 body: JSON.stringify({
                     to: token,
                     title,
-                    body
+                    body,
+                    data: { chatId }
                 })
             })
         }
