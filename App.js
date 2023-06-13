@@ -6,7 +6,6 @@ import { useEffect } from 'react';
 import { MenuProvider } from 'react-native-popup-menu';
 
 export default function App() {
-
   // useEffect(() => {
   //   const prepare = async () => {
 

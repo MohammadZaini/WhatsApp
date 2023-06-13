@@ -34,7 +34,9 @@
     "react-navigation-header-buttons": "^10.0.0",
     "react-redux": "^8.0.7",
     "styled-components": "^5.3.11",
-    "validate.js": "^0.13.1"
+    "validate.js": "^0.13.1",
+    "expo-notifications": "~0.18.1",
+    "expo-device": "~5.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
