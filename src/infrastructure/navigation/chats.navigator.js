@@ -19,6 +19,7 @@ import DataListScreen from "../../features/chats/screens/data-list.screen";
 
 import * as Notifications from "expo-notifications"
 import * as Device from 'expo-device';
+import { StackActions, useNavigation } from "@react-navigation/native";
 
 const ChatStack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export const ChatsNavigator = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const dispatch = useDispatch();
+    const navigation = useNavigation();
 
     const userData = useSelector(state => state.auth.userData);
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -44,8 +46,16 @@ export const ChatsNavigator = () => {
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log("Notification tapped:");
-            console.log(JSON.stringify(response, 0, 2));
+            const { data } = response.notification.request.content;
+            const chatId = data["chatId"];
+
+            if (chatId) {
+                const pushAction = StackActions.push("Chat", { chatId });
+                navigation.dispatch(pushAction);
+            }
+            else {
+                console.log("No chat id sent with notification");
+            }
         });
 
         return () => {
@@ -53,7 +63,6 @@ export const ChatsNavigator = () => {
             Notifications.removeNotificationSubscription(responseListener.current);
         };
     }, []);;
-
 
 
     useEffect(() => {
@@ -199,4 +208,4 @@ async function registerForPushNotificationsAsync() {
     }
 
     return token;
-}
+};
