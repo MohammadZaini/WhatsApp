@@ -145,8 +145,8 @@ const NewChatScreen = props => {
                         horizontal
                         keyExtractor={item => item}
                         contentContainerStyle={{ alignItems: 'center' }}
-                        // ref={ref => selectedUsersFlatlist.current = ref}
-                        // onContentSizeChange={() => selectedUsersFlatlist.current.scrollToEnd()}
+                        ref={ref => selectedUsersFlatlist.current = ref}
+                        onContentSizeChange={() => selectedUsers.length > 0 && selectedUsersFlatlist.current.scrollToEnd()}
                         renderItem={(itemData) => {
                             const userId = itemData.item;
                             const userData = storedUsers[userId];

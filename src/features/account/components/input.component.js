@@ -9,7 +9,7 @@ export const Input = props => {
 
     const onChangeText = text => {
         setValue(text)
-        props.onInputChanged(props.id, text);
+        props.onInputChanged(props.id, text); // (inputId, inputValue)
     };
 
     return <Container>
